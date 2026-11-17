@@ -1,0 +1,8 @@
+# Render の Blueprint 設定（任意）。ダッシュボードから手動で作る場合は不要です。
+services:
+  - type: web
+    name: hifumi
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT

@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block title %}集計結果｜ヒフミ{% endblock %}
+{% block content %}
+<section class="card">
+  <h1>集計結果</h1>
+  <p class="hint">ファイル：{{ filename }}　／　データ {{ total_rows }} 行
+    {% if summary.skipped %}（うち {{ summary.skipped }} 行は「{{ summary.value_col }}」が数値として読めないため集計から除外）{% endif %}</p>
+
+  <form method="post" enctype="multipart/form-data" class="column-form">
+    <input type="hidden" name="data_b64" value="{{ data_b64 }}">
+    <div class="field">
+      <label for="group_col">グループにする列</label>
+      <select id="group_col" name="group_col">
+        {% for h in headers %}<option value="{{ h }}" {% if h == summary.group_col %}selected{% endif %}>{{ h }}</option>{% endfor %}
+      </select>
+    </div>
+    <div class="field">
+      <label for="value_col">集計する数値列</label>
+      <select id="value_col" name="value_col">
+        {% for h in numeric_cols %}<option value="{{ h }}" {% if h == summary.value_col %}selected{% endif %}>{{ h }}</option>{% endfor %}
+      </select>
+    </div>
+    <div class="buttons">
+      <button type="submit" formaction="/analyze" class="btn secondary">この列で再集計</button>
+      <button type="submit" formaction="/report" class="btn">Excel レポートをダウンロード</button>
+    </div>
+  </form>
+</section>
+
+<section class="stats">
+  <div class="stat"><span class="label">合計</span><span class="value">{{ "{:,.2f}".format(summary.total).rstrip("0").rstrip(".") }}</span></div>
+  <div class="stat"><span class="label">平均</span><span class="value">{{ "{:,.2f}".format(summary.average).rstrip("0").rstrip(".") }}</span></div>
+  <div class="stat"><span class="label">件数</span><span class="value">{{ summary.row_count }}</span></div>
+  <div class="stat"><span class="label">最小 / 最大</span><span class="value small">{{ "{:,.0f}".format(summary.minimum) }} / {{ "{:,.0f}".format(summary.maximum) }}</span></div>
+</section>
+
+<section class="card">
+  <h2>{{ summary.group_col }}ごとの{{ summary.value_col }}</h2>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>{{ summary.group_col }}</th><th class="num">件数</th><th class="num">合計</th><th class="num">平均</th><th>構成比</th></tr></thead>
+      <tbody>
+      {% for g in summary.groups %}
+        <tr>
+          <td>{{ g.name }}</td>
+          <td class="num">{{ g.count }}</td>
+          <td class="num">{{ "{:,.0f}".format(g.total) }}</td>
+          <td class="num">{{ "{:,.1f}".format(g.average) }}</td>
+          <td class="share"><span class="bar" style="width: {{ ((g.share / summary.groups[0].share * 100) if summary.groups[0].share else 0)|round(1) }}%"></span><span class="pct">{{ "{:.1f}".format(g.share * 100) }}%</span></td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="card">
+  <h2>元データのプレビュー（先頭 {{ preview|length }} 行）</h2>
+  <div class="table-wrap">
+    <table>
+      <thead><tr>{% for h in headers %}<th>{{ h }}</th>{% endfor %}</tr></thead>
+      <tbody>
+      {% for row in preview %}<tr>{% for v in row %}<td>{{ "" if v is none else v }}</td>{% endfor %}</tr>{% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <p class="hint"><a href="/">← 別のファイルを選ぶ</a></p>
+</section>
+{% endblock %}

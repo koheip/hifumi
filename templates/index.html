@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="card">
+  <h1>Excel をアップロードして、集計レポートを作る</h1>
+  <p>売上表・支出表などの <strong>.xlsx</strong> ファイルを選ぶだけで、グループごとの合計・平均・件数を集計し、
+     グラフ付きの整形済み Excel レポートをダウンロードできます。</p>
+
+  <form action="/analyze" method="post" enctype="multipart/form-data" class="upload-form">
+    <label for="file">Excel ファイル（.xlsx／{{ max_mb }}MB まで）</label>
+    <input type="file" id="file" name="file" accept=".xlsx" required>
+    <button type="submit" class="btn">集計する</button>
+  </form>
+
+  <p class="hint">試してみたい方は <a href="/sample.xlsx">サンプルの Excel（架空の売上データ）</a> をダウンロードして、そのままアップロードしてください。</p>
+</section>
+
+<section class="card">
+  <h2>使い方</h2>
+  <ol>
+    <li>1行目に見出し、2行目以降にデータが入った .xlsx を用意します（先頭のシートを読み込みます）。</li>
+    <li>アップロードすると、「グループにする列」と「集計する数値列」を<strong>自動で判定</strong>します。</li>
+    <li>結果画面で列を選び直して再集計できます。プレビューを確認して、Excel レポートをダウンロードします。</li>
+  </ol>
+  <p class="hint">プライバシー：ファイルはメモリ上だけで処理し、サーバーには保存しません。</p>
+</section>
+{% endblock %}

@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}ヒフミ｜Excel 集計レポートメーカー{% endblock %}</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="logo" href="/">ヒフミ <span>Excel 集計レポートメーカー</span></a>
+  </header>
+  <main class="container">
+    {% block content %}{% endblock %}
+  </main>
+  <footer class="site-footer">
+    <p>ヒフミ ― Web アプリケーション開発3 課題作品。アップロードしたファイルはサーバーに保存されません。</p>
+  </footer>
+</body>
+</html>
